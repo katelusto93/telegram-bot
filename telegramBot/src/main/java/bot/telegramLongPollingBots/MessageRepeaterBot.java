@@ -1,5 +1,6 @@
-package service.telegramLongPollingBots;
+package bot.telegramLongPollingBots;
 
+import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -37,7 +38,7 @@ public class MessageRepeaterBot extends TelegramLongPollingBot {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws TelegramApiException {
         MessageRepeaterBot bot = new MessageRepeaterBot();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(bot);
