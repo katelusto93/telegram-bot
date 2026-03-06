@@ -44,7 +44,7 @@ export CHAT_ID=...
 4. Run the desired bot's `main` method:
    - `bot.telegramLongPollingBots.CurrencyCommandsBot`
    - `bot.telegramLongPollingBots.MessageRepeaterBot`
-   - `bot.defaultAbsSenderBots.SendOneMessageBot`
+   - `bot.defaultabssenderbots.SendOneMessageBot`
 
 Get a bot token from [@BotFather](https://t.me/BotFather).
 

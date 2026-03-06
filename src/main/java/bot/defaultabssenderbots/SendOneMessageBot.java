@@ -1,4 +1,4 @@
-package bot.defaultAbsSenderBots;
+package bot.defaultabssenderbots;
 
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
@@ -17,6 +17,9 @@ public class SendOneMessageBot extends DefaultAbsSender {
 
     public static void main(String[] args) throws TelegramApiException {
         SendOneMessageBot bot = new SendOneMessageBot(new DefaultBotOptions());
-        bot.execute(SendMessage.builder().chatId(System.getenv("CHAT_ID")).text("Hello World from Java").build());
+        bot.execute(SendMessage.builder()
+            .chatId(System.getenv("CHAT_ID"))
+            .text("Hello World from Java")
+            .build());
     }
 }

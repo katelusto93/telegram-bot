@@ -1,17 +1,19 @@
 package service.impl;
 
 import entity.Currency;
+import lombok.extern.slf4j.Slf4j;
 import service.CurrencyModeService;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class HashMapCurrencyModeService implements CurrencyModeService {
-    private final Map<Long, Currency> originalCurrency = new HashMap();
-    private final Map<Long, Currency> targetCurrency = new HashMap();
+    private final Map<Long, Currency> originalCurrency = new HashMap<>();
+    private final Map<Long, Currency> targetCurrency = new HashMap<>();
 
     public HashMapCurrencyModeService() {
-        System.out.println("HASHMAP MODE is created");
+        log.info("HASHMAP MODE is created");
     }
 
     @Override
