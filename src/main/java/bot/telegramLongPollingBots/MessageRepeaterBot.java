@@ -12,12 +12,12 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class MessageRepeaterBot extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
-        return "@katsiaryna_test_bot";
+        return System.getenv("BOT_USERNAME");
     }
 
     @Override
     public String getBotToken() {
-        return "1965488089:AAFZcboMaLd9XB2eXyQvVyqsF3L7ircqCZ0";
+        return System.getenv("BOT_TOKEN");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package bot.telegramLongPollingBots;
 
 import entity.Currency;
-import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,12 +27,12 @@ public class CurrencyCommandsBot extends TelegramLongPollingBot {
     private final CurrencyConversionService currencyConversionService = CurrencyConversionService.getInstance();
     @Override
     public String getBotUsername() {
-        return "@katsiaryna_test_bot";
+        return System.getenv("BOT_USERNAME");
     }
 
     @Override
     public String getBotToken() {
-        return "1965488089:AAFZcboMaLd9XB2eXyQvVyqsF3L7ircqCZ0";
+        return System.getenv("BOT_TOKEN");
     }
 
     @Override
