@@ -1,6 +1,7 @@
-package bot.telegramLongPollingBots;
+package bot.telegramlongpollingbots;
 
 import entity.Currency;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,9 +23,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class CurrencyCommandsBot extends TelegramLongPollingBot {
+
     private final CurrencyModeService currencyModeService = CurrencyModeService.getInstance();
     private final CurrencyConversionService currencyConversionService = CurrencyConversionService.getInstance();
+
     @Override
     public String getBotUsername() {
         return System.getenv("BOT_USERNAME");
@@ -44,7 +48,7 @@ public class CurrencyCommandsBot extends TelegramLongPollingBot {
                 handleMessage(update.getMessage());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+          log.error("Error handling update: {}", e.getMessage());
         }
     }
 
@@ -53,13 +57,10 @@ public class CurrencyCommandsBot extends TelegramLongPollingBot {
         String[] param = callbackQuery.getData().split(":");
         String action = param[0];
         Currency newCurrency = Currency.valueOf(param[1]);
-        switch (action) {
-            case "ORIGINAL":
-                currencyModeService.setOriginalCurrency(message.getChatId(), newCurrency);
-                break;
-            case "TARGET":
-                currencyModeService.setTargetCurrency(message.getChatId(), newCurrency);
-                break;
+        if ("ORIGINAL".equals(action)) {
+            currencyModeService.setOriginalCurrency(message.getChatId(), newCurrency);
+        } else if ("TARGET".equals(action)) {
+            currencyModeService.setTargetCurrency(message.getChatId(), newCurrency);
         }
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         Currency originalCurrency = currencyModeService.getOriginalCurrency(message.getChatId());
@@ -90,32 +91,30 @@ public class CurrencyCommandsBot extends TelegramLongPollingBot {
             Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =  message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
-                switch (command) {
-                    case "/set_currency":
-                        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-                        Currency originalCurrency =
-                                currencyModeService.getOriginalCurrency(message.getChatId());
-                        Currency targetCurrency = currencyModeService.getTargetCurrency(message.getChatId());
-                        for (Currency currency : Currency.values()) {
-                            buttons.add(
-                                    Arrays.asList(
-                                            InlineKeyboardButton.builder()
-                                                    .text(getCurrencyButton(originalCurrency, currency))
-                                                    .callbackData("ORIGINAL:" + currency)
-                                                    .build(),
-                                            InlineKeyboardButton.builder()
-                                                    .text(getCurrencyButton(targetCurrency, currency))
-                                                    .callbackData("TARGET:" + currency)
-                                                    .build()));
-                        }
-                        execute(
-                                SendMessage.builder()
-                                        .text("Please choose Original and Target currencies")
-                                        .chatId(message.getChatId().toString())
-                                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
-                                        .build());
-                        return;
-                 }
+                if ("/set_currency".equals(command)) {
+                    List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+                    Currency originalCurrency = currencyModeService.getOriginalCurrency(message.getChatId());
+                    Currency targetCurrency = currencyModeService.getTargetCurrency(message.getChatId());
+                    for (Currency currency : Currency.values()) {
+                        buttons.add(
+                                Arrays.asList(
+                                        InlineKeyboardButton.builder()
+                                                .text(getCurrencyButton(originalCurrency, currency))
+                                                .callbackData("ORIGINAL:" + currency)
+                                                .build(),
+                                        InlineKeyboardButton.builder()
+                                                .text(getCurrencyButton(targetCurrency, currency))
+                                                .callbackData("TARGET:" + currency)
+                                                .build()));
+                    }
+                    execute(
+                            SendMessage.builder()
+                                    .text("Please choose Original and Target currencies")
+                                    .chatId(message.getChatId().toString())
+                                    .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+                                    .build());
+                    return;
+                }
             }
         }
         if (message.hasText()) {
@@ -140,7 +139,7 @@ public class CurrencyCommandsBot extends TelegramLongPollingBot {
     private Optional<Double> parseDouble(String messageText) {
         try {
             return Optional.of(Double.parseDouble(messageText));
-        } catch (Exception e) {
+        } catch (NumberFormatException ignored) {
             return Optional.empty();
         }
     }
